@@ -169,16 +169,24 @@
     :config
     (beacon-mode 1))
 
-  (use-package dashboard
-    :diminish
-    (dashboard-mode page-break-lines-mode)
-    :custom
-    (dashboard-startup-banner "~/.emacs/dashboard.txt")
-    (dashboard-items '((recents . 15)
-               (projects . 5)
-               (bookmarks . 5)
-               (agenda . 5)))
-    :hook
-    (after-init . dashboard-setup-startup-hook)
-    :config
-    (add-to-list 'dashboard-items '(agenda) t))
+ (use-package dashboard
+   :diminish
+   (dashboard-mode page-break-lines-mode)
+   :custom
+   (dashboard-startup-banner "~/.emacs/dashboard.txt")
+   (dashboard-items '((recents . 15)
+              (projects . 5)
+              (bookmarks . 5)
+              (agenda . 5)))
+   :hook
+   (after-init . dashboard-setup-startup-hook)
+   :config
+   (add-to-list 'dashboard-items '(agenda) t))
+
+(use-package magit
+  :ensure t
+  :bind (("C-x g" . magit-status)
+         ("C-x M-g" . magit-dispatch-popup))
+  :init
+  :config
+  )
