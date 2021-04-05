@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(magit dashboard ivy-rich beacon highlight-indent-guides rainbow-delimiters hide-mode-line org-bullets all-the-icons doom-modeline neotree doom-themes swiper ## use-package)))
+   '(hydra git-gutter magit dashboard ivy-rich beacon highlight-indent-guides rainbow-delimiters hide-mode-line org-bullets all-the-icons doom-modeline neotree doom-themes swiper ## use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

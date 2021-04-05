@@ -45,8 +45,9 @@
 (define-key key-translation-map (kbd "C-h") (kbd "<DEL>"))
 (define-key global-map (kbd "C-x ?") 'help-command)
 
-;; 行番号を左側に常に表示p
-(global-linum-mode t)
+;; 行番号を左側に常に表示
+;(global-linum-mode t)
+(global-display-line-numbers-mode t)
 
 ;; TAB幅
 (setq-default tab-width 4)
@@ -54,7 +55,7 @@
 (setq-default indent-tabs-mode nil)
 
 ;; メニューバーの非表示
-(menu-bar-mode -1)
+nn(menu-bar-mode -1)
 
 ;; ツールバーの非表示
 (tool-bar-mode -1)
@@ -125,34 +126,24 @@
    (show-paren-when-point-inside-paren t)
    (show-paren-when-point-in-periphery t))
 
+;(use-package neotree
+;    :after
+;    projectile
+;    :commands
+;    (neotree-show neotree-hide neotree-dir neotree-find)
+;    :custom
+;   (neo-theme 'nerd2)
+;   :bind
+;   ("[f9]" . neotree-toggle))
+
 (use-package neotree
-    :after
-    projectile
-    :commands
-    (neotree-show neotree-hide neotree-dir neotree-find)
-    :custom
-    (neo-theme 'nerd2)
-    :bind
-    ("<f9>" . neotree-projectile-toggle)
-    :preface
-    (defun neotree-projectile-toggle ()
-      (interactive)
-      (let ((project-dir
-         (ignore-errors
-         ;;; Pick one: projectile or find-file-in-project
-           (projectile-project-root)
-           ))
-        (file-name (buffer-file-name))
-        (neo-smart-open t))
-    (if (and (fboundp 'neo-global--window-exists-p)
-         (neo-global--window-exists-p))
-        (neotree-hide)
-      (progn
-        (neotree-show)
-        (if project-dir
-        (neotree-dir project-dir))
-        (if file-name
-        (neotree-find file-name)))))))
+  :commands
+  (neotree-show neotree-hide neotree-dir neotree-find)
+  :custom
+  (neo-theme 'nerd2)
+  :bind
+  ("<f9>" . neotree-toggle))
+
 
 (use-package highlight-indent-guides
     :diminish
@@ -190,3 +181,15 @@
   :init
   :config
   )
+
+(use-package git-gutter
+    :custom
+    (git-gutter:modified-sign "~")
+    (git-gutter:added-sign    "+")
+    (git-gutter:deleted-sign  "-")
+    :custom-face
+    (git-gutter:modified ((t (:background "#f1fa8c"))))
+    (git-gutter:added    ((t (:background "#50fa7b"))))
+    (git-gutter:deleted  ((t (:background "#ff79c6"))))
+    :config
+    (global-git-gutter-mode +1))
