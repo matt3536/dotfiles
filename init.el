@@ -40,6 +40,11 @@
 
 ;;;;  General / Apperance
 
+;; font
+(set-face-attribute 'default nil
+                    :family "Ricty Diminished"
+                    :height 115)
+
 ;; C-mで改行＋インデントを行う
 (global-set-key (kbd "C-m") 'newline-and-indent)
 
@@ -373,6 +378,14 @@
   (add-hook 'css-mode-hook 'rainbow-mode)
   (add-hook 'html-mode-hook 'rainbow-mode)
   (add-hook 'emacs-lisp-mode-hook 'rainbow-mode))
+
+(use-package undo-tree
+  :delight
+  :bind ("C-/" . undo-tree-redo)
+  :init (global-undo-tree-mode)
+  :custom
+  (undo-tree-visualizer-timestamps t)
+  (undo-tree-visualizer-diff t))
 
 ;;;; hydra setting
 
