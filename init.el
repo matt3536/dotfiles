@@ -1,4 +1,9 @@
-;;;;lod-pathes
+x;;;;  Language Format
+(set-language-environment "Japanese")
+(prefer-coding-system 'utf-8)
+(set-default 'buffer-file-coding-system 'utf-8)
+
+;;;; load-pathes
 
 ;; load-pathを追加する関数を定義
 (defun add-to-load-path (&rest paths) (let (path) (dolist (path paths paths) (let ((default-directory
@@ -34,6 +39,11 @@
   (setq use-package-always-ensure t))
 
 ;;;;  General / Apperance
+
+;; font
+(set-face-attribute 'default nil
+                    :family "Ricty Diminished"
+                    :height 130)
 
 ;; C-mで改行＋インデントを行う
 (global-set-key (kbd "C-m") 'newline-and-indent)
@@ -125,6 +135,7 @@
   (ivy-count-format "(%d/%d) ")
   (ivy-re-builders-alist '((t . ivy--regex-plus)))
   (ivy-use-virtual-buffers t)
+  (ivy-height 35)
   :config (ivy-mode))
 
 (use-package ivy-pass
@@ -163,7 +174,7 @@
   (defun ivy-rich-file-group (candidate)
     "Displays the file group of the candidate for ivy-rich"
     (let ((candidate (expand-file-name candidate ivy--directory)))
-      (if (or (not (file-exists-p candidate)) (file-remote-p cqandidate))
+      (if (or (not (file-exists-p candidate)) (file-remote-p candidate))
           ""
         (let* ((group-id (file-attribute-group-id (file-attributes candidate)))
                (group-function (if (fboundp #'group-name) #'group-name #'identity))
@@ -225,7 +236,7 @@
              '(:columns
                ((ivy-rich-switch-buffer-icon       (:width 2))
                 (ivy-rich-candidate                (:width 40))
-                (ivy-rich-switch-buffer-size       (:width 7))
+                (ivy-rich-switch-buffer-size       (:width 7 :height 70))
                 (ivy-rich-switch-buffer-indicators (:width 4 :face error :align right))
                 (ivy-rich-switch-buffer-major-mode (:width 20 :face warning)))
                :predicate (lambda (cand) (get-buffer cand))))
@@ -245,12 +256,7 @@
          :map swiper-map
          ("M-%" . swiper-query-replace))
   		 ("M-s M-s" . swiper-thing-at-point))
-          
-;(use-package swiper
-;  :ensure t
-;  :bind
-;  ("M-s M-s" . swiper-thing-at-point))
- 
+
 (use-package doom-themes
   :custom
   (doom-themes-enable-italic t)
@@ -324,7 +330,7 @@
   :diminish
   (dashboard-mode page-break-lines-mode)
   :custom
-  (dashboard-startup-banner "~/.emacs/dashboard.txt")
+  (dashboard-startup-banner "/home/matt/.emacs/dashboard.txt")
   (dashboard-items '((recents . 15)
                      (projects . 5)
                      (bookmarks . 5)
@@ -359,6 +365,14 @@
   (add-hook 'css-mode-hook 'rainbow-mode)
   (add-hook 'html-mode-hook 'rainbow-mode)
   (add-hook 'emacs-lisp-mode-hook 'rainbow-mode))
+      
+(use-package undo-tree
+  :delight
+  :bind ("C-/" . undo-tree-redo)
+  :init (global-undo-tree-mode)
+  :custom
+  (undo-tree-visualizer-timestamps t)
+  (undo-tree-visualizer-diff t))
 
 ;;;; hydra setting
 
