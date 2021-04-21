@@ -1,4 +1,4 @@
-x;;;;  Language Format
+;;;;  Language Format
 (set-language-environment "Japanese")
 (prefer-coding-system 'utf-8)
 (set-default 'buffer-file-coding-system 'utf-8)
@@ -103,6 +103,23 @@ x;;;;  Language Format
   :if (display-graphic-p)
   :config (unless (find-font (font-spec :name "all-the-icons"))
             (all-the-icons-install-fonts t)))
+
+;;; auto-complete
+(use-package company
+  :defer 0.5
+  :delight
+  :custom
+  (company-begin-commands '(self-insert-command))
+  (company-idle-delay 0)
+  (company-minimum-prefix-length 2)
+  (company-show-numbers t)
+  (company-tooltip-align-annotations 't)
+  (global-company-mode t))
+
+(use-package company-box
+  :after company
+  :delight
+  :hook (company-mode . company-box-mode))
 
 ;;; ivy-swiper-counsel
 (use-package counsel
@@ -257,6 +274,15 @@ x;;;;  Language Format
          ("M-%" . swiper-query-replace))
   		 ("M-s M-s" . swiper-thing-at-point))
 
+(use-package imenu-list
+  :bind
+  ("<f10>" . imenu-list-smart-toggle)
+  :custom-face
+  (imenu-list-entry-face-1 ((t (:foreground "white"))))
+  :custom
+  (imenu-list-focus-after-activation t)
+  (imenu-list-auto-resize nil))
+
 (use-package doom-themes
   :custom
   (doom-themes-enable-italic t)
@@ -330,7 +356,7 @@ x;;;;  Language Format
   :diminish
   (dashboard-mode page-break-lines-mode)
   :custom
-  (dashboard-startup-banner "/home/matt/.emacs/dashboard.txt")
+  (dashboard-startup-banner "~/.emacs.d/dashboard.txt")
   (dashboard-items '((recents . 15)
                      (projects . 5)
                      (bookmarks . 5)
