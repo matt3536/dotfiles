@@ -42,8 +42,11 @@
 
 ;; font
 (set-face-attribute 'default nil
-                    :family "Ricty Diminished"
-                    :height 130)
+   :family "Ricty Diminished"
+  :height 145)
+
+;; emacs起動時に画面を最大化
+(toggle-frame-maximized)
 
 ;; C-mで改行＋インデントを行う
 (global-set-key (kbd "C-m") 'newline-and-indent)
@@ -91,6 +94,16 @@
 
 ;; $PATHにfzfのパスを追加
 (setq exec-path (append exec-path '("/home/matt/.fzf/bin")))
+
+;;; ediff
+;; コントロール用のバッファを同一フレーム内に表示する
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
+;; ediff のバッファを左右に並べる（"|"キーで上下、左右の切り替え可）
+(setq ediff-split-window-function 'split-window-horizontally)
+
+;; ediff を起動するためのキーを設定する
+(global-set-key (kbd "C-c e") 'ediff-buffers)
 
 ;;;;  use-packages
 
@@ -399,6 +412,10 @@
   :custom
   (undo-tree-visualizer-timestamps t)
   (undo-tree-visualizer-diff t))
+
+(use-package rg
+  :ensure t
+  :bind ("C-c s" . rg))
 
 ;;;; hydra setting
 
