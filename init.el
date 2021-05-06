@@ -43,7 +43,7 @@
 ;; font
 (set-face-attribute 'default nil
    :family "Ricty Diminished"
-  :height 145)
+  :height 130)
 
 ;; emacs起動時に画面を最大化
 (toggle-frame-maximized)
@@ -72,6 +72,9 @@
 
 ;; メニューバーの非表示
 (menu-bar-mode -1)
+
+;; スクロールバーの非表示
+(scroll-bar-mode -1)
 
 ;; ツールバーの非表示
 (tool-bar-mode -1)
