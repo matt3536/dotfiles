@@ -5,3 +5,7 @@ planatuml.jar
 /auto-save-list/*
 places
 projectile-bookmarks.eld
+.dap-breakpoints
+.lsp-session-v1
+amx-items
+forge-database.sqlite
