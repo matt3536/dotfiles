@@ -1,3 +1,5 @@
+(require 'profiler)
+(profiler-start 'cpu)
 
 ;;;; load-pathes
 
@@ -36,6 +38,11 @@
 ;;;;;
 ;;;;;  General / Apperance
 ;;;;;
+
+;;;; Server
+(use-package server
+  :ensure nil
+  :hook (after-init . server-mode))
 
 ;;;; Editing
 
@@ -136,7 +143,7 @@
   (defun recentf-cleanup-silence ()
      (interactive)
      (let ((message-log-max nil))
-      (if shutup-p
+      (if shutu-p
           (shut-up (recentf-cleanup))
         (recentf-cleanup)))
     (message ""))
@@ -245,7 +252,7 @@
   ("C-x C-r" . counsel-recentf)
   ("C-x C-b" . counsel-ibuffer)
   ("M-o f" . counsel-fzf)
-  ("M-o r" . counsel-rg))
+  ("M-o c" . counsel-rg))
   :custom
   (counsel-yank-pop-height 20)
   (enable-recursive-minibuffers t)
@@ -283,7 +290,7 @@
   :bind
   (("C-x b" . ivy-switch-buffer)
   ("C-x B" . ivy-switch-buffer-other-window)
-  ("C-x C-b" . ibuffer)
+  ("C-x C-b" . ivy-switch-buffer-other)
   ("M-H"   . ivy-resume)
   :map ivy-minibuffer-map
   ("C-w" . ivy-backward-kill-word)
@@ -306,7 +313,7 @@
   (use-package amx)
   ;; ghq
   (use-package ivy-ghq
-   :load-path "~/Developments/src/github.com/analyticd/ivy-ghq"
+   :load-path "~/src/github.com/analyticd/ivy-ghq"
    :commands (ivy-ghq-open)
    :bind
    ("M-o g" . ivy-ghq-open-and-fzf)
@@ -651,7 +658,6 @@
    ("C-p" . company-select-previous)
    ("C-n" . company-select-next))
   :custom
-  ;(company-begin-commands '(self-insert-command))
   (company-idle-delay 0)
   (company-minimum-prefix-length 1)
   (company-show-numbers t)
@@ -667,14 +673,13 @@
     c-mode
     objc-mode
     python-mode) . (lambda () (set (make-local-variable 'company-backends)
-                            '((company-yasnippet
-                               company-lsp
+                            '((company-capf
+                               company-yasnippet
                                company-files
                                ;; company-dabbrev-code
                                )))))
   :config
   (use-package company-box
-   :after company
    :delight
    :hook (company-mode . company-box-mode)))
 
@@ -799,8 +804,8 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 ;; * C/C++  -- ccls(LSP LLDB server)
 ;; * Go     -- VSCode.Go(DAP delve server)
 ;; *        -- VSCode.NativeDebug(DAP GDB-LLDB server)
-;; *        -- 
-;; * Python -- 
+;; *        -- gopls(LSP server)
+;; * Python -- pyright(LSP server)
 (use-package lsp-mode
   :hook
   ((c-mode c++-mode go-mode python-mode) . lsp)
@@ -811,7 +816,8 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
   (lsp-print-performance nil)
   ;; general
   (lsp-auto-guess-root t)
-  (lsp-document-sync-method 'incremental) ;; none, full, incremental, or nil
+  ;; (lsp-document-sync-method 'lsp-sync-incremental) ;; none, full, incremental, or nil
+  (lsp-document-sync-method 2)
   (lsp-response-timeout 10)
   (lsp-completion-provider :capf)
   (lsp-prefer-flymake t) ;; t(flymake), nil(lsp-ui), or :none
@@ -890,6 +896,7 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 ;;;; Golang
 (use-package go-mode
   :mode "\\.go\\'"
+  :if (executable-find "gopls")
   :custom (gofmt-command "goimports")
   :bind (:map go-mode-map
          ("C-c C-n" . go-run)
@@ -928,13 +935,13 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 ;;;; Python
 
 (use-package lsp-pyright
-  :ensure t
-  :hook (python-mode . (lambda ()
+ :if (executable-find "pyright-langserver")
+ :hook (python-mode . (lambda ()
                           (require 'lsp-pyright)
-                          (lsp))))  ; or lsp-deferred
+                           (lsp))))  ; or lsp-deferred
 
-(use-package python
-  :delight
+(use-package python-mode
+  :mode "\\.py\\'"
   :config
   (use-package py-isort
   :hook ((python-mode . pyvenv-mode)
@@ -954,6 +961,44 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 
 
 ;;;; Org
+(use-package org
+  :custom
+  (org-src-fontify-natively t)
+  (private-directory "~/Private/")
+  (task-file (concat "~/Private" "task.org"))
+  (schedule-file (concat "~/Private" "schedule.org"))
+  (org-directory "~/Private/")
+  (org-plantuml-jar-path "~/.emacs.d/plantuml.jar")
+  (org-confirm-babel-evaluate nil)
+  (org-clock-out-remove-zero-time-clocks t)
+  (org-startup-folded 'content)
+  (org-columns-default-format "%50ITEM(Task) %5TODO(Todo) %10Effort(Effort){:} %2PRIORITY %TAGS")
+  (org-agenda-columns-add-appointments-to-effort-sum t)
+  (org-agenda-span 'day)
+  (org-agenda-log-mode-items (quote (closed clock)))
+  (org-agenda-clockreport-parameter-plist
+   '(:maxlevel 5 :block t :tstart t :tend t :emphasize t :link t :narrow 80 :indent t :formula nil
+    :timestamp t :level 5 :tcolumns nil :formatter nil))
+  (org-global-properties (quote ((
+                                  "Effort_ALL" . "00:05 00:10 00:15 00:30 01:00 01:30 02:00 02:30 03:00"))))
+  (org-agenda-files (quote (
+                            "~/Private/task.org"
+                            "~/Private/routine.org"
+                            "~/Private/task.org_archive"
+                            "~/Private/schedule.org")))
+  :bind (("C-c C-c" . counsel-org-capture)
+        ("M-o a" . org-agenda)
+        ("C-x C-l" . org-store-link)
+        :map org-mode-map
+        ("C-c i" . org-clock-in)
+        ("C-c o" . org-clock-out)
+        ("C-c n" . org-narrow-to-subtree)
+        ("C-c b" . org-narrow-to-block)
+        ("C-c w" . widen)
+        ("C-c e" . org-set-effort)))
+
+(use-package org-bullets
+    :hook (org-mode . org-bullets-mode))
 
 ;;;; HTML/CSS/SCSS/JS
 (use-package scss-mode
@@ -1131,7 +1176,7 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
   (doom-themes-enable-italic t)
   (doom-themes-enable-bold t)
   :config
-  (load-theme 'doom-gruvbox t)
+  (load-theme 'doom-nord t)
   (doom-themes-neotree-config)
   (doom-themes-org-config)
   (use-package doom-modeline
@@ -1175,6 +1220,7 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
 
 ;;;; Highlight Line
 (use-package hl-line
+  :disabled
   :ensure nil
   :hook
   (after-init . global-hl-line-mode))
@@ -1248,11 +1294,11 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
   ("C-," . point-undo)
   ("C-." . point-redo))
 
-;; $PATHにfzfのパスを追加
-(setq exec-path (append exec-path '("/home/matt/.fzf/bin")))
-
 ;;;; hydra setting
 (defhydra hydra-zoom (global-map "<f2>")
   "zoom"
   ("g" text-scale-increase "in")
   ("l" text-scale-decrease "out"))
+
+(profiler-report)
+(profiler-stop)
